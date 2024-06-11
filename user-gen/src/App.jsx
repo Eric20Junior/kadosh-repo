@@ -114,13 +114,13 @@ function App() {
       </div>
         ) : (
           filteredUsers.map((user, index) => (
-            <div key={index} className="m-1 w-[20rem]">
+            <div key={user.email} className="m-1 w-[20rem]">
               <div className="rounded-xl border bg-white px-4 pt-8 pb-10 shadow-lg">
                 <div className="relative mx-auto w-[11rem] rounded-full">
                   <img
                     className="mx-auto h-auto w-full rounded-full"
                     src={user.picture.large}
-                    alt=""
+                    alt={`${user.name.first} ${user.name.last}`}
                   />
                 </div>
                 <h1 className="my-1 text-center text-xl font-bold leading-8 text-gray-900">
