@@ -1,8 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+
+// Filter function
+const filterUsers = (users, searchQuery, startDate, endDate, nationality) => {
+  return users.filter((user) => {
+    const nameMatch = `${user.name.first} ${user.name.last}`.toLowerCase().includes(searchQuery.toLowerCase().trim());
+    const emailMatch = user.email.toLowerCase().includes(searchQuery.toLowerCase().trim());
+
+    const userDob = new Date(user.dob.date);
+    const start = startDate ? new Date(startDate) : new Date("1900-01-01");
+    const end = endDate ? new Date(endDate) : new Date();
+    const dateMatch = userDob >= start && userDob <= end;
+
+    const nationalityMatch = nationality ? user.location.country === nationality : true;
+
+    return (nameMatch || emailMatch) && dateMatch && nationalityMatch;
+  });
+};
 
 function App() {
   const [users, setUsers] = useState([]);
+  const [ filteredUsers, setFilteredUsers ] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -38,24 +56,13 @@ function App() {
     return date.toLocaleDateString();
   };
 
-  // Filter function
-  const filterUsers = () => {
-    return users.filter((user) => {
-      const nameMatch = `${user.name.first} ${user.name.last}`.toLowerCase().includes(searchQuery.toLowerCase());
-      const emailMatch = user.email.toLowerCase().includes(searchQuery.toLowerCase());
+  const filter = useCallback(() => {
+    setFilteredUsers(filterUsers(users, searchQuery, startDate, endDate, nationality));
+  }, [users, searchQuery, startDate, endDate, nationality])
 
-      const userDob = new Date(user.dob.date);
-      const start = startDate ? new Date(startDate) : new Date("1900-01-01");
-      const end = endDate ? new Date(endDate) : new Date();
-      const dateMatch = userDob >= start && userDob <= end;
-
-      const nationalityMatch = nationality ? user.location.country === nationality : true;
-
-      return (nameMatch || emailMatch) && dateMatch && nationalityMatch;
-    });
-  };
-
-  const filteredUsers = filterUsers();
+  useEffect(() => {
+    filter();
+  }, [filter]);
 
   return (
     <>
