@@ -87,19 +87,19 @@ function App() {
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="p-2 border-2 rounded-lg text-xs w-9"
+          className="p-2 border-2 rounded-lg text-xs cursor-text"
         />
         <label className="text-xs">End</label>
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className="p-2 border-2 rounded-lg text-xs w-9"
+          className="p-2 border-2 rounded-lg text-xs cursor-text"
         />
         <select
           value={nationality}
           onChange={(e) => setNationality(e.target.value)}
-          className="p-2 border rounded-lg text-xs"
+          className="p-2 border rounded-lg text-xs cursor-pointer"
         >
           <option value="">All Nationalities</option>
           {nationalities.map((nat, index) => (
