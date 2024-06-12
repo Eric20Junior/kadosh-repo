@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import _ from "lodash";
 
 // Filter function
 const filterUsers = (users, searchQuery, startDate, endDate, nationality) => {
@@ -35,7 +36,7 @@ function App() {
         const data = response.data.results;
 
         // Set state with fetched data
-        setUsers(data); 
+        setUsers(data);
         
         // Extract unique nationalities
         const uniqueNationalities = [...new Set(data.map((user) => user.location.country))];
@@ -56,13 +57,19 @@ function App() {
     return date.toLocaleDateString();
   };
 
-  const filter = useCallback(() => {
+   // Debounce function
+  const debouncedFilter = useCallback(
+    _.debounce((searchQuery, startDate, endDate, nationality, users) => {
     setFilteredUsers(filterUsers(users, searchQuery, startDate, endDate, nationality));
-  }, [users, searchQuery, startDate, endDate, nationality])
+  }, 500), 
+  []
+  )
 
   useEffect(() => {
-    filter();
-  }, [filter]);
+    debouncedFilter(searchQuery, startDate, endDate, nationality, users);
+  }, [searchQuery, startDate, endDate, nationality, users ,debouncedFilter]);
+
+ 
 
   return (
     <>
@@ -113,7 +120,7 @@ function App() {
           </div>
       </div>
         ) : (
-          filteredUsers.map((user, index) => (
+          filteredUsers.map((user) => (
             <div key={user.email} className="m-1 w-[20rem]">
               <div className="rounded-xl border bg-white px-4 pt-8 pb-10 shadow-lg">
                 <div className="relative mx-auto w-[11rem] rounded-full">
